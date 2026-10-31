@@ -1,0 +1,358 @@
+erDiagram
+  Organization {
+    String id PK
+    String name
+    String domain
+    String joinCode
+    Json settings
+    DateTime createdAt
+    DateTime updatedAt
+  }
+  User {
+    String id PK
+    String organizationId FK
+    String email
+    String passwordHash
+    Role role
+    String firstName
+    String lastName
+    Boolean isActive
+    DateTime lastLoginAt
+    DateTime createdAt
+    DateTime updatedAt
+  }
+  Department {
+    String id PK
+    String organizationId FK
+    String name
+    String description
+    DateTime createdAt
+  }
+  Employee {
+    String id PK
+    String organizationId FK
+    String userId FK
+    String employeeCode
+    String departmentId FK
+    String managerId FK
+    String designation
+    Float experienceYears
+    String location
+    WorkMode workMode
+    Availability availability
+    Int allocationPercent
+  }
+  Skill {
+    String id PK
+    String name
+    String slug
+    String category
+    String description
+    DateTime createdAt
+  }
+  SkillAlias {
+    String id PK
+    String skillId FK
+    String alias
+  }
+  EmployeeSkill {
+    String id PK
+    String employeeId FK
+    String skillId FK
+    Int claimedLevel
+    Int verifiedLevel
+    Float confidence
+    SkillStatus status
+    Float yearsUsed
+    DateTime lastVerifiedAt
+    Json verificationNotes
+    DateTime createdAt
+    DateTime updatedAt
+  }
+  SkillEvidence {
+    String id PK
+    String employeeId FK
+    String skillId FK
+    EvidenceType type
+    String title
+    Float score
+    Int level
+    String reviewerId FK
+    String reviewerName
+    String sourceId FK
+    Json details
+    DateTime occurredAt
+  }
+  Assessment {
+    String id PK
+    String organizationId FK
+    String skillId FK
+    AssessmentType type
+    String title
+    String description
+    Int durationMins
+    Float passingScore
+    Boolean isActive
+    DateTime createdAt
+    DateTime updatedAt
+  }
+  AssessmentQuestion {
+    String id PK
+    String assessmentId FK
+    String skillId FK
+    String prompt
+    String codeSnippet
+    Json options
+    Int correctIndex
+    String explanation
+    Int difficulty
+    Int position
+  }
+  AssessmentSubmission {
+    String id PK
+    String assessmentId FK
+    String employeeId FK
+    Json answers
+    Int correctCount
+    Int totalCount
+    Float score
+    Boolean passed
+    Int levelAwarded
+    Int attempt
+    Int timeTakenSecs
+    DateTime submittedAt
+  }
+  Certification {
+    String id PK
+    String employeeId FK
+    String skillId FK
+    String name
+    String issuer
+    DateTime issueDate
+    DateTime expiryDate
+    String credentialUrl
+    Boolean isVerified
+    String verifiedById FK
+    DateTime createdAt
+  }
+  ManagerFeedback {
+    String id PK
+    String employeeId FK
+    String reviewerId FK
+    String reviewerRole
+    Int rating
+    String comment
+    Json skillRatings
+    String context
+    DateTime createdAt
+  }
+  Project {
+    String id PK
+    String organizationId FK
+    String departmentId FK
+    String managerId FK
+    String createdById FK
+    String title
+    String description
+    ProjectStatus status
+    String priority
+    Int openPositions
+    Float minExperience
+    WorkMode workMode
+  }
+  ProjectSkillRequirement {
+    String id PK
+    String projectId FK
+    String skillId FK
+    Int minLevel
+    Boolean isCritical
+    Float weight
+  }
+  ProjectRecommendation {
+    String id PK
+    String projectId FK
+    String employeeId FK
+    Int rank
+    Float readinessScore
+    Float skillMatchScore
+    Float practicalScore
+    Float experienceScore
+    Float feedbackScore
+    Float availabilityScore
+    Boolean eligible
+    Boolean nearlyReady
+  }
+  ProjectAssignment {
+    String id PK
+    String projectId FK
+    String employeeId FK
+    String role
+    Int allocationPercent
+    AssignmentStatus status
+    String assignedById FK
+    Float readinessAtAssign
+    Json skillsUsed
+    DateTime startedAt
+    DateTime endedAt
+  }
+  LearningRecommendation {
+    String id PK
+    String employeeId FK
+    String skillId FK
+    String projectId FK
+    Int currentLevel
+    Int targetLevel
+    String priority
+    String reason
+    Json resources
+    Json tasks
+    Int estimatedHours
+    LearningStatus status
+  }
+  LearningProgress {
+    String id PK
+    String learningRecommendationId FK
+    String employeeId FK
+    String event
+    String taskId FK
+    Float progressPercent
+    String note
+    DateTime createdAt
+  }
+  Badge {
+    String id PK
+    String code
+    String name
+    String description
+    String icon
+    Int points
+  }
+  EmployeeBadge {
+    String id PK
+    String employeeId FK
+    String badgeId FK
+    String reason
+    DateTime awardedAt
+  }
+  MarketSource {
+    String id PK
+    String name
+    DataKind kind
+    String description
+    String url
+    DateTime createdAt
+  }
+  MarketDataRun {
+    String id PK
+    String organizationId FK
+    String sourceId FK
+    String fileName
+    String status
+    String pipeline
+    Int rowsRead
+    Int rowsKept
+    Int rowsDropped
+    Int skillsMatched
+    Json unmatchedTop
+    DateTime periodStart
+  }
+  MarketJobPosting {
+    String id PK
+    String organizationId FK
+    String runId FK
+    String externalId FK
+    String title
+    String company
+    String location
+    String country
+    String jobLevel
+    String jobType
+    DateTime postedAt
+  }
+  MarketJobSkill {
+    String id PK
+    String postingId FK
+    String skillId FK
+    String rawText
+  }
+  MarketSkillDemand {
+    String id PK
+    String organizationId FK
+    String runId FK
+    String skillId FK
+    Int postingCount
+    Int totalPostings
+    Float demandPercent
+    Float seniorShare
+    DataKind kind
+    DateTime createdAt
+  }
+  MarketSkillTrend {
+    String id PK
+    String organizationId FK
+    String runId FK
+    String skillId FK
+    String period
+    Int postingCount
+    DataKind kind
+  }
+  AuditLog {
+    String id PK
+    String organizationId FK
+    String userId FK
+    String action
+    String entityType
+    String entityId FK
+    Json before
+    Json after
+    String ipAddress
+    DateTime createdAt
+  }
+  Assessment ||--o{ AssessmentQuestion : "assessment"
+  Assessment ||--o{ AssessmentSubmission : "assessment"
+  Badge ||--o{ EmployeeBadge : "badge"
+  Department ||--o{ Employee : "department"
+  Department ||--o{ Project : "department"
+  Employee ||--o{ AssessmentSubmission : "employee"
+  Employee ||--o{ Certification : "employee"
+  Employee ||--o{ EmployeeBadge : "employee"
+  Employee ||--o{ EmployeeSkill : "employee"
+  Employee ||--o{ LearningProgress : "employee"
+  Employee ||--o{ LearningRecommendation : "employee"
+  Employee ||--o{ ManagerFeedback : "employee"
+  Employee ||--o{ ProjectAssignment : "employee"
+  Employee ||--o{ ProjectRecommendation : "employee"
+  Employee ||--o{ SkillEvidence : "employee"
+  LearningRecommendation ||--o{ LearningProgress : "learning"
+  MarketDataRun ||--o{ MarketJobPosting : "run"
+  MarketDataRun ||--o{ MarketSkillDemand : "run"
+  MarketDataRun ||--o{ MarketSkillTrend : "run"
+  MarketJobPosting ||--o{ MarketJobSkill : "posting"
+  MarketSource ||--o{ MarketDataRun : "source"
+  Organization ||--o{ Assessment : "organization"
+  Organization ||--o{ AuditLog : "organization"
+  Organization ||--o{ Department : "organization"
+  Organization ||--o{ Employee : "organization"
+  Organization ||--o{ MarketDataRun : "organization"
+  Organization ||--o{ MarketJobPosting : "organization"
+  Organization ||--o{ MarketSkillDemand : "organization"
+  Organization ||--o{ MarketSkillTrend : "organization"
+  Organization ||--o{ Project : "organization"
+  Organization ||--o{ User : "organization"
+  Project ||--o{ LearningRecommendation : "project"
+  Project ||--o{ ProjectAssignment : "project"
+  Project ||--o{ ProjectRecommendation : "project"
+  Project ||--o{ ProjectSkillRequirement : "project"
+  Skill ||--o{ Assessment : "skill"
+  Skill ||--o{ AssessmentQuestion : "skill"
+  Skill ||--o{ EmployeeSkill : "skill"
+  Skill ||--o{ LearningRecommendation : "skill"
+  Skill ||--o{ MarketJobSkill : "skill"
+  Skill ||--o{ MarketSkillDemand : "skill"
+  Skill ||--o{ MarketSkillTrend : "skill"
+  Skill ||--o{ ProjectSkillRequirement : "skill"
+  Skill ||--o{ SkillAlias : "skill"
+  Skill ||--o{ SkillEvidence : "skill"
+  User ||--o{ AuditLog : "user"
+  User ||--o{ Employee : "user"
+  User ||--o{ ManagerFeedback : "reviewer"

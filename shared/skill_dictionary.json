@@ -1,0 +1,790 @@
+[
+ {
+  "name": "React",
+  "slug": "react",
+  "category": "Frontend",
+  "aliases": [
+   "react",
+   "react js",
+   "react native",
+   "react.js",
+   "reactjs"
+  ],
+  "resources": [
+   {
+    "title": "React official docs \u2014 Learn",
+    "url": "https://react.dev/learn",
+    "type": "Official docs"
+   },
+   {
+    "title": "React reference: Hooks",
+    "url": "https://react.dev/reference/react/hooks",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "JavaScript",
+  "slug": "javascript",
+  "category": "Frontend",
+  "aliases": [
+   "ecmascript",
+   "es6",
+   "javascript",
+   "js"
+  ],
+  "resources": [
+   {
+    "title": "MDN JavaScript Guide",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "TypeScript",
+  "slug": "typescript",
+  "category": "Frontend",
+  "aliases": [
+   "ts",
+   "typescript"
+  ],
+  "resources": [
+   {
+    "title": "TypeScript Handbook",
+    "url": "https://www.typescriptlang.org/docs/handbook/intro.html",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "HTML/CSS",
+  "slug": "html-css",
+  "category": "Frontend",
+  "aliases": [
+   "css",
+   "css3",
+   "html",
+   "html/css",
+   "html5",
+   "sass",
+   "scss"
+  ],
+  "resources": [
+   {
+    "title": "MDN Learn web development",
+    "url": "https://developer.mozilla.org/en-US/docs/Learn",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Angular",
+  "slug": "angular",
+  "category": "Frontend",
+  "aliases": [
+   "angular",
+   "angularjs"
+  ],
+  "resources": [
+   {
+    "title": "Angular docs",
+    "url": "https://angular.dev/overview",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Vue.js",
+  "slug": "vuejs",
+  "category": "Frontend",
+  "aliases": [
+   "vue",
+   "vue.js",
+   "vuejs"
+  ],
+  "resources": [
+   {
+    "title": "Vue.js guide",
+    "url": "https://vuejs.org/guide/introduction.html",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Tailwind CSS",
+  "slug": "tailwind-css",
+  "category": "Frontend",
+  "aliases": [
+   "tailwind",
+   "tailwind css",
+   "tailwindcss"
+  ],
+  "resources": [
+   {
+    "title": "Tailwind CSS docs",
+    "url": "https://tailwindcss.com/docs",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Node.js",
+  "slug": "nodejs",
+  "category": "Backend",
+  "aliases": [
+   "express",
+   "express.js",
+   "expressjs",
+   "node",
+   "node js",
+   "node.js",
+   "nodejs"
+  ],
+  "resources": [
+   {
+    "title": "Node.js Learn",
+    "url": "https://nodejs.org/en/learn",
+    "type": "Official docs"
+   },
+   {
+    "title": "Express guide",
+    "url": "https://expressjs.com/en/guide/routing.html",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Python",
+  "slug": "python",
+  "category": "Backend",
+  "aliases": [
+   "python",
+   "python 3",
+   "python3"
+  ],
+  "resources": [
+   {
+    "title": "The Python Tutorial",
+    "url": "https://docs.python.org/3/tutorial/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Java",
+  "slug": "java",
+  "category": "Backend",
+  "aliases": [
+   "core java",
+   "java",
+   "java 11",
+   "java 8"
+  ],
+  "resources": [
+   {
+    "title": "Dev.java Learn",
+    "url": "https://dev.java/learn/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Spring Boot",
+  "slug": "spring-boot",
+  "category": "Backend",
+  "aliases": [
+   "spring",
+   "spring boot",
+   "spring framework",
+   "springboot"
+  ],
+  "resources": [
+   {
+    "title": "Spring Boot reference",
+    "url": "https://docs.spring.io/spring-boot/index.html",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "C#/.NET",
+  "slug": "csharp-net",
+  "category": "Backend",
+  "aliases": [
+   ".net",
+   ".net core",
+   "asp.net",
+   "asp.net core",
+   "c#",
+   "c#/.net",
+   "dotnet"
+  ],
+  "resources": [
+   {
+    "title": "Microsoft Learn .NET",
+    "url": "https://learn.microsoft.com/en-us/dotnet/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Go",
+  "slug": "go",
+  "category": "Backend",
+  "aliases": [
+   "go",
+   "golang"
+  ],
+  "resources": [
+   {
+    "title": "A Tour of Go",
+    "url": "https://go.dev/tour/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "C++",
+  "slug": "cpp",
+  "category": "Backend",
+  "aliases": [
+   "c++",
+   "cpp"
+  ],
+  "resources": [
+   {
+    "title": "cppreference",
+    "url": "https://en.cppreference.com/w/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "REST APIs",
+  "slug": "rest-apis",
+  "category": "Backend",
+  "aliases": [
+   "api development",
+   "rest",
+   "rest api",
+   "rest apis",
+   "restful",
+   "restful apis",
+   "web services"
+  ],
+  "resources": [
+   {
+    "title": "MDN HTTP overview",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "GraphQL",
+  "slug": "graphql",
+  "category": "Backend",
+  "aliases": [
+   "graphql"
+  ],
+  "resources": [
+   {
+    "title": "GraphQL Learn",
+    "url": "https://graphql.org/learn/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Microservices",
+  "slug": "microservices",
+  "category": "Backend",
+  "aliases": [
+   "microservice architecture",
+   "microservices",
+   "microservices architecture"
+  ],
+  "resources": [
+   {
+    "title": "Microsoft: Microservices architecture",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/microservices/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "PostgreSQL",
+  "slug": "postgresql",
+  "category": "Data",
+  "aliases": [
+   "postgre sql",
+   "postgres",
+   "postgresql",
+   "psql"
+  ],
+  "resources": [
+   {
+    "title": "PostgreSQL tutorial (official)",
+    "url": "https://www.postgresql.org/docs/current/tutorial.html",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "SQL",
+  "slug": "sql",
+  "category": "Data",
+  "aliases": [
+   "ms sql",
+   "mysql",
+   "pl/sql",
+   "sql",
+   "sql server",
+   "t-sql"
+  ],
+  "resources": [
+   {
+    "title": "PostgreSQL SQL language docs",
+    "url": "https://www.postgresql.org/docs/current/sql.html",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "MongoDB",
+  "slug": "mongodb",
+  "category": "Data",
+  "aliases": [
+   "mongo",
+   "mongodb"
+  ],
+  "resources": [
+   {
+    "title": "MongoDB University",
+    "url": "https://learn.mongodb.com/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Redis",
+  "slug": "redis",
+  "category": "Data",
+  "aliases": [
+   "redis"
+  ],
+  "resources": [
+   {
+    "title": "Redis docs",
+    "url": "https://redis.io/docs/latest/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Data Analysis",
+  "slug": "data-analysis",
+  "category": "Data",
+  "aliases": [
+   "data analysis",
+   "data analytics",
+   "exploratory data analysis",
+   "numpy",
+   "pandas"
+  ],
+  "resources": [
+   {
+    "title": "pandas getting started",
+    "url": "https://pandas.pydata.org/docs/getting_started/index.html",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Machine Learning",
+  "slug": "machine-learning",
+  "category": "AI/ML",
+  "aliases": [
+   "machine learning",
+   "ml",
+   "predictive modeling",
+   "scikit-learn",
+   "sklearn"
+  ],
+  "resources": [
+   {
+    "title": "scikit-learn user guide",
+    "url": "https://scikit-learn.org/stable/user_guide.html",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Deep Learning",
+  "slug": "deep-learning",
+  "category": "AI/ML",
+  "aliases": [
+   "deep learning",
+   "keras",
+   "neural networks",
+   "pytorch",
+   "tensorflow"
+  ],
+  "resources": [
+   {
+    "title": "PyTorch tutorials",
+    "url": "https://pytorch.org/tutorials/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "NLP",
+  "slug": "nlp",
+  "category": "AI/ML",
+  "aliases": [
+   "genai",
+   "generative ai",
+   "large language models",
+   "llm",
+   "natural language processing",
+   "nlp",
+   "spacy"
+  ],
+  "resources": [
+   {
+    "title": "spaCy 101",
+    "url": "https://spacy.io/usage/spacy-101",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Data Engineering",
+  "slug": "data-engineering",
+  "category": "Data",
+  "aliases": [
+   "airflow",
+   "apache airflow",
+   "apache kafka",
+   "apache spark",
+   "data engineering",
+   "data pipelines",
+   "etl",
+   "kafka",
+   "pyspark",
+   "spark"
+  ],
+  "resources": [
+   {
+    "title": "Apache Spark docs",
+    "url": "https://spark.apache.org/docs/latest/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Power BI",
+  "slug": "power-bi",
+  "category": "Data",
+  "aliases": [
+   "data visualization",
+   "looker",
+   "power bi",
+   "powerbi",
+   "tableau"
+  ],
+  "resources": [
+   {
+    "title": "Microsoft Learn Power BI",
+    "url": "https://learn.microsoft.com/en-us/power-bi/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "AWS",
+  "slug": "aws",
+  "category": "Cloud",
+  "aliases": [
+   "amazon web services",
+   "aws",
+   "aws lambda",
+   "ec2",
+   "lambda",
+   "s3"
+  ],
+  "resources": [
+   {
+    "title": "AWS Skill Builder",
+    "url": "https://skillbuilder.aws/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Azure",
+  "slug": "azure",
+  "category": "Cloud",
+  "aliases": [
+   "azure",
+   "microsoft azure"
+  ],
+  "resources": [
+   {
+    "title": "Microsoft Learn Azure",
+    "url": "https://learn.microsoft.com/en-us/training/azure/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "GCP",
+  "slug": "gcp",
+  "category": "Cloud",
+  "aliases": [
+   "bigquery",
+   "gcp",
+   "google cloud",
+   "google cloud platform"
+  ],
+  "resources": [
+   {
+    "title": "Google Cloud Skills Boost",
+    "url": "https://www.cloudskillsboost.google/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Docker",
+  "slug": "docker",
+  "category": "DevOps",
+  "aliases": [
+   "containerization",
+   "containers",
+   "docker"
+  ],
+  "resources": [
+   {
+    "title": "Docker get started",
+    "url": "https://docs.docker.com/get-started/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Kubernetes",
+  "slug": "kubernetes",
+  "category": "DevOps",
+  "aliases": [
+   "aks",
+   "eks",
+   "gke",
+   "helm",
+   "k8s",
+   "kubernetes"
+  ],
+  "resources": [
+   {
+    "title": "Kubernetes basics",
+    "url": "https://kubernetes.io/docs/tutorials/kubernetes-basics/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "CI/CD",
+  "slug": "ci-cd",
+  "category": "DevOps",
+  "aliases": [
+   "ci/cd",
+   "cicd",
+   "continuous delivery",
+   "continuous integration",
+   "github actions",
+   "gitlab ci",
+   "jenkins"
+  ],
+  "resources": [
+   {
+    "title": "GitHub Actions docs",
+    "url": "https://docs.github.com/en/actions",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Terraform",
+  "slug": "terraform",
+  "category": "DevOps",
+  "aliases": [
+   "iac",
+   "infrastructure as code",
+   "terraform"
+  ],
+  "resources": [
+   {
+    "title": "Terraform tutorials",
+    "url": "https://developer.hashicorp.com/terraform/tutorials",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Linux",
+  "slug": "linux",
+  "category": "DevOps",
+  "aliases": [
+   "bash",
+   "linux",
+   "shell scripting",
+   "unix"
+  ],
+  "resources": [
+   {
+    "title": "Linux Journey",
+    "url": "https://linuxjourney.com/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Git",
+  "slug": "git",
+  "category": "DevOps",
+  "aliases": [
+   "bitbucket",
+   "git",
+   "github",
+   "gitlab",
+   "version control"
+  ],
+  "resources": [
+   {
+    "title": "Pro Git book",
+    "url": "https://git-scm.com/book/en/v2",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Testing/QA",
+  "slug": "testing-qa",
+  "category": "Quality",
+  "aliases": [
+   "automated testing",
+   "cypress",
+   "jest",
+   "qa",
+   "quality assurance",
+   "selenium",
+   "test automation",
+   "testing",
+   "testing/qa",
+   "unit testing"
+  ],
+  "resources": [
+   {
+    "title": "Jest getting started",
+    "url": "https://jestjs.io/docs/getting-started",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Cybersecurity",
+  "slug": "cybersecurity",
+  "category": "Security",
+  "aliases": [
+   "cybersecurity",
+   "information security",
+   "network security",
+   "owasp",
+   "security"
+  ],
+  "resources": [
+   {
+    "title": "OWASP Top 10",
+    "url": "https://owasp.org/www-project-top-ten/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Agile/Scrum",
+  "slug": "agile-scrum",
+  "category": "Practices",
+  "aliases": [
+   "agile",
+   "agile methodologies",
+   "agile/scrum",
+   "jira",
+   "kanban",
+   "scrum"
+  ],
+  "resources": [
+   {
+    "title": "Scrum Guide",
+    "url": "https://scrumguides.org/scrum-guide.html",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "System Design",
+  "slug": "system-design",
+  "category": "Practices",
+  "aliases": [
+   "architecture",
+   "design patterns",
+   "distributed systems",
+   "software architecture",
+   "system design"
+  ],
+  "resources": [
+   {
+    "title": "Microsoft Azure Architecture Center",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/",
+    "type": "Official docs"
+   }
+  ]
+ },
+ {
+  "name": "Communication",
+  "slug": "communication",
+  "category": "Soft Skills",
+  "aliases": [
+   "communication",
+   "communication skills",
+   "verbal communication",
+   "written communication"
+  ],
+  "resources": []
+ },
+ {
+  "name": "Problem Solving",
+  "slug": "problem-solving",
+  "category": "Soft Skills",
+  "aliases": [
+   "analytical skills",
+   "critical thinking",
+   "problem solving",
+   "problemsolving"
+  ],
+  "resources": []
+ },
+ {
+  "name": "Leadership",
+  "slug": "leadership",
+  "category": "Soft Skills",
+  "aliases": [
+   "leadership",
+   "mentoring",
+   "people management",
+   "team leadership"
+  ],
+  "resources": []
+ }
+]

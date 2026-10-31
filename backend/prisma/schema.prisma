@@ -1,0 +1,650 @@
+// TalentBridge AI — Prisma schema (PostgreSQL)
+// Every tenant-owned table carries organizationId (directly or via a parent that does)
+// and every API query is scoped by the organizationId taken from the verified JWT.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ───────────────────────────── ENUMS ─────────────────────────────
+
+enum Role {
+  EMPLOYEE
+  MANAGER
+  HR
+}
+
+enum WorkMode {
+  REMOTE
+  ONSITE
+  HYBRID
+}
+
+enum Availability {
+  AVAILABLE
+  PARTIALLY_AVAILABLE
+  ON_PROJECT
+  ON_LEAVE
+}
+
+enum SkillStatus {
+  CLAIMED // self-reported only
+  IN_REVIEW // some evidence, but no objective evidence yet
+  VERIFIED // at least one objective (assessment / practical) evidence
+}
+
+enum EvidenceType {
+  MCQ_ASSESSMENT
+  PRACTICAL_ASSESSMENT
+  PROJECT
+  CERTIFICATION
+  MANAGER_FEEDBACK
+  TEAM_LEAD_FEEDBACK
+}
+
+enum AssessmentType {
+  MCQ
+  PRACTICAL
+}
+
+enum ProjectStatus {
+  DRAFT
+  OPEN
+  STAFFING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum RecommendationStatus {
+  RECOMMENDED // produced by the matching engine
+  SHORTLISTED // manager approved, waiting for HR
+  APPROVED // HR approved -> assignment created
+  REJECTED
+}
+
+enum AssignmentStatus {
+  ACTIVE
+  COMPLETED
+  RELEASED
+}
+
+enum LearningStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  READY_FOR_REASSESSMENT
+  COMPLETED
+}
+
+enum DataKind {
+  OBSERVED
+  DEMO
+  FORECAST
+}
+
+// ───────────────────────── ORGANIZATION / USERS ─────────────────────────
+
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  domain    String?  @unique
+  joinCode  String   @unique
+  settings  Json     @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users       User[]
+  departments Department[]
+  employees   Employee[]
+  projects    Project[]
+  assessments Assessment[]
+  auditLogs   AuditLog[]
+  marketRuns  MarketDataRun[]
+  postings    MarketJobPosting[]
+  demand      MarketSkillDemand[]
+  trends      MarketSkillTrend[]
+}
+
+model User {
+  id             String    @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  email          String    @unique
+  passwordHash   String
+  role           Role      @default(EMPLOYEE)
+  firstName      String
+  lastName       String
+  isActive       Boolean   @default(true)
+  lastLoginAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  employee        Employee?
+  directReports   Employee[]              @relation("ManagerRelation")
+  feedbackGiven   ManagerFeedback[]
+  decisions       ProjectRecommendation[] @relation("DecisionMaker")
+  managedProjects Project[]               @relation("ProjectManager")
+  createdProjects Project[]               @relation("ProjectCreator")
+  auditLogs       AuditLog[]
+
+  @@index([organizationId, role])
+}
+
+model Department {
+  id             String   @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  description    String?
+  createdAt      DateTime @default(now())
+
+  employees Employee[]
+  projects  Project[]
+
+  @@unique([organizationId, name])
+}
+
+// Skill Passport owner. Every User (including managers) has an Employee row,
+// so managers can also be matched to projects.
+model Employee {
+  id                 String       @id @default(uuid())
+  organizationId     String
+  organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId             String       @unique
+  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeCode       String
+  departmentId       String?
+  department         Department?  @relation(fields: [departmentId], references: [id])
+  managerId          String?
+  manager            User?        @relation("ManagerRelation", fields: [managerId], references: [id])
+  designation        String?
+  experienceYears    Float        @default(0)
+  location           String?
+  workMode           WorkMode     @default(HYBRID)
+  availability       Availability @default(AVAILABLE)
+  allocationPercent  Int          @default(0)
+  bio                String?
+  careerInterests    String[]     @default([])
+  points             Int          @default(0)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  skills          EmployeeSkill[]
+  evidence        SkillEvidence[]
+  submissions     AssessmentSubmission[]
+  certifications  Certification[]
+  feedback        ManagerFeedback[]
+  recommendations ProjectRecommendation[]
+  assignments     ProjectAssignment[]
+  learning        LearningRecommendation[]
+  progress        LearningProgress[]
+  badges          EmployeeBadge[]
+
+  @@unique([organizationId, employeeCode])
+  @@index([organizationId])
+  @@index([managerId])
+}
+
+// ─────────────────────────────── SKILLS ───────────────────────────────
+
+// Global curated taxonomy (shared across tenants, not tenant data).
+model Skill {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  slug        String   @unique
+  category    String
+  description String?
+  createdAt   DateTime @default(now())
+
+  aliases         SkillAlias[]
+  employeeSkills  EmployeeSkill[]
+  evidence        SkillEvidence[]
+  requirements    ProjectSkillRequirement[]
+  assessments     Assessment[]
+  questions       AssessmentQuestion[]
+  learning        LearningRecommendation[]
+  marketJobSkills MarketJobSkill[]
+  demand          MarketSkillDemand[]
+  trends          MarketSkillTrend[]
+}
+
+model SkillAlias {
+  id      String @id @default(uuid())
+  skillId String
+  skill   Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  alias   String @unique // stored lower-case
+}
+
+// Claimed and verified levels are stored separately and never merged.
+model EmployeeSkill {
+  id                String      @id @default(uuid())
+  employeeId        String
+  employee          Employee    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  skillId           String
+  skill             Skill       @relation(fields: [skillId], references: [id])
+  claimedLevel      Int         @default(1) // 1..5, self-reported
+  verifiedLevel     Int? // 1..5, set ONLY by the verification engine
+  confidence        Float       @default(0) // 0..1 evidence coverage
+  status            SkillStatus @default(CLAIMED)
+  yearsUsed         Float       @default(0)
+  lastVerifiedAt    DateTime?
+  verificationNotes Json?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@unique([employeeId, skillId])
+  @@index([skillId])
+}
+
+model SkillEvidence {
+  id           String       @id @default(uuid())
+  employeeId   String
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  skillId      String
+  skill        Skill        @relation(fields: [skillId], references: [id])
+  type         EvidenceType
+  title        String
+  score        Float? // 0..100 where applicable
+  level        Int? // 1..5 level implied by this evidence
+  reviewerId   String?
+  reviewerName String?
+  sourceId     String? // submission / certification / feedback / assignment id
+  details      Json?
+  occurredAt   DateTime     @default(now())
+  createdAt    DateTime     @default(now())
+
+  @@index([employeeId, skillId])
+}
+
+// ───────────────────────────── ASSESSMENTS ─────────────────────────────
+
+model Assessment {
+  id             String         @id @default(uuid())
+  organizationId String
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  skillId        String
+  skill          Skill          @relation(fields: [skillId], references: [id])
+  type           AssessmentType
+  title          String
+  description    String?
+  durationMins   Int            @default(15)
+  passingScore   Float          @default(60)
+  isActive       Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  questions   AssessmentQuestion[]
+  submissions AssessmentSubmission[]
+
+  @@index([organizationId, skillId])
+}
+
+// Practical questions are controlled scenarios (code reading, debugging, query design)
+// graded against a fixed key — no untrusted code is ever executed on the server.
+model AssessmentQuestion {
+  id           String     @id @default(uuid())
+  assessmentId String
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  skillId      String
+  skill        Skill      @relation(fields: [skillId], references: [id])
+  prompt       String
+  codeSnippet  String?
+  options      Json // string[]
+  correctIndex Int // never sent to the client before submission
+  explanation  String?
+  difficulty   Int        @default(2) // 1..5
+  position     Int        @default(0)
+
+  @@index([assessmentId])
+}
+
+model AssessmentSubmission {
+  id            String     @id @default(uuid())
+  assessmentId  String
+  assessment    Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  employeeId    String
+  employee      Employee   @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  answers       Json
+  correctCount  Int
+  totalCount    Int
+  score         Float // 0..100, difficulty weighted
+  passed        Boolean
+  levelAwarded  Int
+  attempt       Int        @default(1)
+  timeTakenSecs Int?
+  submittedAt   DateTime   @default(now())
+
+  @@index([employeeId])
+  @@index([assessmentId])
+}
+
+model Certification {
+  id            String    @id @default(uuid())
+  employeeId    String
+  employee      Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  skillId       String?
+  name          String
+  issuer        String
+  issueDate     DateTime?
+  expiryDate    DateTime?
+  credentialUrl String?
+  isVerified    Boolean   @default(false)
+  verifiedById  String?
+  createdAt     DateTime  @default(now())
+
+  @@index([employeeId])
+}
+
+model ManagerFeedback {
+  id           String   @id @default(uuid())
+  employeeId   String
+  employee     Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  reviewerId   String
+  reviewer     User     @relation(fields: [reviewerId], references: [id])
+  reviewerRole String   @default("MANAGER") // MANAGER | TEAM_LEAD
+  rating       Int // overall 1..5
+  comment      String
+  skillRatings Json? // [{ skillId, level }]
+  context      String?
+  createdAt    DateTime @default(now())
+
+  @@index([employeeId])
+}
+
+// ─────────────────────────────── PROJECTS ───────────────────────────────
+
+model Project {
+  id             String        @id @default(uuid())
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  departmentId   String?
+  department     Department?   @relation(fields: [departmentId], references: [id])
+  managerId      String?
+  manager        User?         @relation("ProjectManager", fields: [managerId], references: [id])
+  createdById    String
+  createdBy      User          @relation("ProjectCreator", fields: [createdById], references: [id])
+  title          String
+  description    String?
+  status         ProjectStatus @default(OPEN)
+  priority       String        @default("MEDIUM")
+  openPositions  Int           @default(1)
+  minExperience  Float         @default(0)
+  workMode       WorkMode      @default(HYBRID)
+  location       String?
+  startDate      DateTime?
+  endDate        DateTime?
+  lastMatchedAt  DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  requirements    ProjectSkillRequirement[]
+  recommendations ProjectRecommendation[]
+  assignments     ProjectAssignment[]
+  learning        LearningRecommendation[]
+
+  @@index([organizationId, status])
+}
+
+model ProjectSkillRequirement {
+  id         String  @id @default(uuid())
+  projectId  String
+  project    Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  skillId    String
+  skill      Skill   @relation(fields: [skillId], references: [id])
+  minLevel   Int     @default(3)
+  isCritical Boolean @default(false)
+  weight     Float   @default(1)
+
+  @@unique([projectId, skillId])
+}
+
+model ProjectRecommendation {
+  id                String               @id @default(uuid())
+  projectId         String
+  project           Project              @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  employeeId        String
+  employee          Employee             @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  rank              Int
+  readinessScore    Float
+  skillMatchScore   Float
+  practicalScore    Float
+  experienceScore   Float
+  feedbackScore     Float
+  availabilityScore Float
+  eligible          Boolean
+  nearlyReady       Boolean              @default(false)
+  explanation       Json
+  status            RecommendationStatus @default(RECOMMENDED)
+  managerNote       String?
+  managerDecidedAt  DateTime?
+  hrNote            String?
+  decidedById       String?
+  decidedBy         User?                @relation("DecisionMaker", fields: [decidedById], references: [id])
+  decidedAt         DateTime?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  @@unique([projectId, employeeId])
+  @@index([status])
+}
+
+model ProjectAssignment {
+  id                String           @id @default(uuid())
+  projectId         String
+  project           Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  employeeId        String
+  employee          Employee         @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  role              String?
+  allocationPercent Int              @default(100)
+  status            AssignmentStatus @default(ACTIVE)
+  assignedById      String?
+  readinessAtAssign Float?
+  skillsUsed        Json? // [{ skillId, name, level }]
+  startedAt         DateTime         @default(now())
+  endedAt           DateTime?
+
+  @@unique([projectId, employeeId])
+  @@index([employeeId])
+}
+
+// ─────────────────────────────── LEARNING ───────────────────────────────
+
+model LearningRecommendation {
+  id              String         @id @default(uuid())
+  employeeId      String
+  employee        Employee       @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  skillId         String
+  skill           Skill          @relation(fields: [skillId], references: [id])
+  projectId       String?
+  project         Project?       @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  currentLevel    Int            @default(0)
+  targetLevel     Int
+  priority        String         @default("MEDIUM")
+  reason          String
+  resources       Json // [{ title, type, url, hours }]
+  tasks           Json // [{ id, title, done }]
+  estimatedHours  Int            @default(10)
+  status          LearningStatus @default(NOT_STARTED)
+  progressPercent Float          @default(0)
+  explanationText String?
+  explanationBy   String         @default("rules") // rules | gemini
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  progress LearningProgress[]
+
+  @@unique([employeeId, skillId])
+  @@index([employeeId])
+}
+
+model LearningProgress {
+  id                       String                 @id @default(uuid())
+  learningRecommendationId String
+  learning                 LearningRecommendation @relation(fields: [learningRecommendationId], references: [id], onDelete: Cascade)
+  employeeId               String
+  employee                 Employee               @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  event                    String // TASK_DONE | TASK_UNDONE | REASSESSED
+  taskId                   String?
+  progressPercent          Float
+  note                     String?
+  createdAt                DateTime               @default(now())
+
+  @@index([employeeId])
+}
+
+// ─────────────────────────────── BADGES ───────────────────────────────
+
+model Badge {
+  id          String @id @default(uuid())
+  code        String @unique
+  name        String
+  description String
+  icon        String
+  points      Int    @default(50)
+
+  awards EmployeeBadge[]
+}
+
+model EmployeeBadge {
+  id         String   @id @default(uuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  badgeId    String
+  badge      Badge    @relation(fields: [badgeId], references: [id])
+  reason     String?
+  awardedAt  DateTime @default(now())
+
+  @@unique([employeeId, badgeId])
+}
+
+// ─────────────────────────── MARKET INTELLIGENCE ───────────────────────────
+
+model MarketSource {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  kind        DataKind @default(OBSERVED)
+  description String?
+  url         String?
+  createdAt   DateTime @default(now())
+
+  runs MarketDataRun[]
+}
+
+model MarketDataRun {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  sourceId       String
+  source         MarketSource @relation(fields: [sourceId], references: [id])
+  fileName       String?
+  status         String       @default("RUNNING") // RUNNING | COMPLETED | FAILED
+  pipeline       String       @default("ai-service") // ai-service | node-fallback
+  rowsRead       Int          @default(0)
+  rowsKept       Int          @default(0)
+  rowsDropped    Int          @default(0)
+  skillsMatched  Int          @default(0)
+  unmatchedTop   Json?
+  periodStart    DateTime?
+  periodEnd      DateTime?
+  stats          Json?
+  error          String?
+  startedAt      DateTime     @default(now())
+  completedAt    DateTime?
+
+  postings MarketJobPosting[]
+  demand   MarketSkillDemand[]
+  trends   MarketSkillTrend[]
+
+  @@index([organizationId])
+}
+
+model MarketJobPosting {
+  id             String        @id @default(uuid())
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  runId          String
+  run            MarketDataRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  externalId     String
+  title          String
+  company        String?
+  location       String?
+  country        String?
+  jobLevel       String?
+  jobType        String?
+  postedAt       DateTime?
+
+  skills MarketJobSkill[]
+
+  @@unique([runId, externalId])
+  @@index([organizationId])
+}
+
+model MarketJobSkill {
+  id        String           @id @default(uuid())
+  postingId String
+  posting   MarketJobPosting @relation(fields: [postingId], references: [id], onDelete: Cascade)
+  skillId   String
+  skill     Skill            @relation(fields: [skillId], references: [id])
+  rawText   String
+
+  @@unique([postingId, skillId])
+  @@index([skillId])
+}
+
+model MarketSkillDemand {
+  id             String        @id @default(uuid())
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  runId          String
+  run            MarketDataRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  skillId        String
+  skill          Skill         @relation(fields: [skillId], references: [id])
+  postingCount   Int
+  totalPostings  Int
+  demandPercent  Float
+  seniorShare    Float? // share of postings that are mid-senior
+  kind           DataKind      @default(OBSERVED)
+  createdAt      DateTime      @default(now())
+
+  @@unique([runId, skillId])
+  @@index([organizationId])
+}
+
+model MarketSkillTrend {
+  id             String        @id @default(uuid())
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  runId          String
+  run            MarketDataRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  skillId        String
+  skill          Skill         @relation(fields: [skillId], references: [id])
+  period         String // YYYY-MM-DD (day bucket) or YYYY-MM
+  postingCount   Int
+  kind           DataKind      @default(OBSERVED)
+
+  @@unique([runId, skillId, period, kind])
+  @@index([organizationId])
+}
+
+// ─────────────────────────────── AUDIT ───────────────────────────────
+
+model AuditLog {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String?
+  user           User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action         String
+  entityType     String?
+  entityId       String?
+  before         Json?
+  after          Json?
+  ipAddress      String?
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId, createdAt])
+}
